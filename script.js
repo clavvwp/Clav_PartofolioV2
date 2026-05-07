@@ -1193,6 +1193,186 @@ function animateOnScroll() {
     });
 }
 
+// ===== INIT: CONTACT PAGE PARTICLES =====
+function initContactHeroParticles() {
+    const container = document.getElementById('heroParticles');
+    if (!container) return;
+
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        
+        const size = Math.random() * 3 + 1;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        
+        container.appendChild(particle);
+
+        // Animate particle
+        gsap.to(particle, {
+            opacity: 0,
+            y: -100,
+            duration: Math.random() * 3 + 2,
+            delay: Math.random() * 0.5,
+            repeat: -1,
+            ease: 'power1.inOut'
+        });
+    }
+
+    // Create initial particles
+    for (let i = 0; i < 50; i++) {
+        createParticle();
+    }
+}
+
+// ===== INIT: HERO CTA BUTTONS =====
+function initContactHeroCTA() {
+    const ctaButtons = document.querySelectorAll('.cta-button');
+    
+    ctaButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const action = btn.dataset.action;
+            
+            if (action === 'start-project' || action === 'say-hello') {
+                // Scroll to form
+                const formSection = document.querySelector('.contact-form-section');
+                if (formSection) {
+                    formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Focus on first input
+                    setTimeout(() => {
+                        const firstInput = formSection.querySelector('input');
+                        if (firstInput) firstInput.focus();
+                    }, 800);
+                }
+            }
+        });
+
+        // Button hover animation
+        btn.addEventListener('mouseenter', function() {
+            gsap.to(this, { scale: 1.05, duration: 0.3 });
+        });
+
+        btn.addEventListener('mouseleave', function() {
+            gsap.to(this, { scale: 1, duration: 0.3 });
+        });
+    });
+}
+
+// ===== INIT: ENHANCED CONTACT FORM ANIMATIONS =====
+function initContactFormAnimations() {
+    const formGroups = document.querySelectorAll('.form-group');
+    
+    // Stagger animation for form groups
+    gsap.from(formGroups, {
+        opacity: 0,
+        x: 30,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power2.out',
+        delay: 0.2
+    });
+
+    // Input interactions
+    formGroups.forEach((group, index) => {
+        const input = group.querySelector('input, textarea');
+        if (!input) return;
+
+        input.addEventListener('focus', function() {
+            gsap.to(this, { scale: 1.02, duration: 0.3 });
+        });
+
+        input.addEventListener('blur', function() {
+            gsap.to(this, { scale: 1, duration: 0.3 });
+        });
+    });
+
+    // Submit button animation
+    const submitBtn = document.querySelector('.submit-btn');
+    if (submitBtn) {
+        submitBtn.addEventListener('mouseenter', function() {
+            gsap.to(this, { 
+                y: -5,
+                boxShadow: '0 20px 50px rgba(0, 217, 255, 0.6)',
+                duration: 0.3 
+            });
+        });
+
+        submitBtn.addEventListener('mouseleave', function() {
+            gsap.to(this, { 
+                y: 0,
+                boxShadow: '0 10px 30px rgba(0, 217, 255, 0.4)',
+                duration: 0.3 
+            });
+        });
+    }
+}
+
+// ===== INIT: CONTACT INFO ANIMATIONS =====
+function initContactInfoAnimations() {
+    const infoItems = document.querySelectorAll('.contact-info-item');
+    
+    gsap.from(infoItems, {
+        opacity: 0,
+        x: -30,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: 'power2.out',
+        delay: 0.4,
+        scrollTrigger: {
+            trigger: '.contact-info-section',
+            start: 'top 80%',
+            once: true
+        }
+    });
+
+    // Add hover glow effect to info items
+    infoItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            gsap.to(this, { 
+                x: 8,
+                color: 'var(--neon-blue)',
+                duration: 0.3 
+            });
+        });
+
+        item.addEventListener('mouseleave', function() {
+            gsap.to(this, { 
+                x: 0,
+                duration: 0.3 
+            });
+        });
+    });
+}
+
+// ===== INIT: CURSOR GLOW ON HERO =====
+function initCursorGlowOnHero() {
+    const heroSection = document.querySelector('.contact-hero');
+    if (!heroSection) return;
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    heroSection.addEventListener('mousemove', (e) => {
+        const rect = heroSection.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+    });
+
+    // Smooth follow animation
+    gsap.ticker.add(() => {
+        targetX += (mouseX - targetX) * 0.1;
+        targetY += (mouseY - targetY) * 0.1;
+
+        // Could add visual glow indicator here if needed
+    });
+}
+
 // ===== INIT: CONTACT FORM =====
 function initContactForm() {
     const form = document.getElementById('contactForm');
@@ -1215,14 +1395,40 @@ function initContactForm() {
 
         // Show success message
         const formResponse = document.getElementById('formResponse');
-        form.style.display = 'none';
-        formResponse.style.display = 'block';
+        
+        // Animate form out
+        gsap.to(form, {
+            opacity: 0,
+            y: 20,
+            duration: 0.3,
+            onComplete: () => {
+                form.style.display = 'none';
+                formResponse.style.display = 'block';
+                
+                // Animate success message in
+                gsap.from(formResponse, {
+                    opacity: 0,
+                    scale: 0.9,
+                    duration: 0.5,
+                    ease: 'back.out'
+                });
+            }
+        });
 
-        // Reset form
+        // Reset form after delay
         setTimeout(() => {
             form.reset();
-            form.style.display = 'flex';
-            formResponse.style.display = 'none';
+            
+            // Animate form back in
+            gsap.to(form, {
+                opacity: 1,
+                y: 0,
+                duration: 0.3,
+                onStart: () => {
+                    form.style.display = 'flex';
+                    formResponse.style.display = 'none';
+                }
+            });
         }, 5000);
 
         // Here you would typically send to a server
@@ -1271,7 +1477,12 @@ function init() {
         loadProjectDetail(projectId);
         animateOnScroll();
     } else if (currentPage === 'contact') {
+        initContactHeroParticles();
+        initContactHeroCTA();
         initContactForm();
+        initContactFormAnimations();
+        initContactInfoAnimations();
+        initCursorGlowOnHero();
         animateOnScroll();
     } else if (currentPage === 'about') {
         animateOnScroll();

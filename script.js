@@ -1,157 +1,681 @@
 /*
 ========================================
 CLAV PREMIUM PORTFOLIO - script.js
-VERSION: 2.0 (Multi-page Edition)
+VERSION: 3.0 (PREMIUM FUTURISTIC EDITION)
 
-⚡ QUICK CUSTOMIZATION:
-1. Project Data → const projects = [...]
-2. Animation Speed → const animConfig = {...}
-3. Cursor Settings → cursorConfig object
-4. Contact Email → Update in HTML
+⚡ ADVANCED FEATURES:
+1. Premium Smooth Scroll (Lenis)
+2. Advanced GSAP Animations
+3. Scroll Trigger Effects
+4. Custom Interactive Cursor
+5. Magnetic Button Effects
+6. Particle System
+7. Dynamic Background Interactions
+8. Text Reveal & Stagger Animations
+9. Parallax Effects
+10. Click-driven Modal Animations
 
 ========================================
 */
 
-// ===== SERVICE DATA =====
-const services = [
-    {
-        id: 1,
-        title: "UI/UX Design",
-        description: "Beautiful and functional interfaces that delight users and drive conversions.",
-        icon: "🎨"
-    },
-    {
-        id: 2,
-        title: "Web Development",
-        description: "Fast, responsive, and modern websites built with the latest technologies.",
-        icon: "💻"
-    },
-    {
-        id: 3,
-        title: "Branding",
-        description: "Complete brand identity solutions including logos, guidelines, and materials.",
-        icon: "✨"
-    },
-    {
-        id: 4,
-        title: "Motion Design",
-        description: "Eye-catching animations and motion graphics that bring stories to life.",
-        icon: "🎬"
-    },
-    {
-        id: 5,
-        title: "Strategy Consulting",
-        description: "Data-driven insights to help you reach your business goals and maximize growth.",
-        icon: "🎯"
-    },
-    {
-        id: 6,
-        title: "3D Visualization",
-        description: "Immersive 3D renderings and visualizations for products and spaces.",
-        icon: "🌐"
+// ===== ADVANCED ANIMATION CONFIG =====
+const animConfig = {
+    cursorSpeed: 0.12,
+    cursorFollowerSpeed: 0.06,
+    lenisSmoothness: 1.2,
+    loadingDuration: 2.5,
+    hoverScaleAmount: 1.08,
+    magneticForce: 0.25,
+    scrollAnimDuration: 0.8,
+    staggerDelay: 0.08,
+    particleCount: 50,
+    mouseTrailDistance: 30
+};
+
+// ===== GLOBAL STATE =====
+let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0, followerX = 0, followerY = 0;
+let lenis = null, activeFilter = 'all', currentPage = getCurrentPage();
+let isLoadingComplete = false;
+let magneticButtons = [];
+
+// Get current page from URL
+function getCurrentPage() {
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('work')) return 'work';
+    if (path.includes('about')) return 'about';
+    if (path.includes('services')) return 'services';
+    if (path.includes('gallery')) return 'gallery';
+    if (path.includes('team')) return 'team';
+    if (path.includes('project')) return 'project';
+    if (path.includes('contact')) return 'contact';
+    return 'home';
+}
+
+// Capitalize text utility
+function capitalizeText(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+}
+
+// Navigate to project detail page
+function navigateToProject(projectId) {
+    window.location.href = `project.html?id=${projectId}`;
+}
+
+// ===== PREMIUM LOADING SCREEN WITH CINEMATIC ENTRANCE =====
+function initLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (!loadingScreen) return;
+
+    const loadingLogo = document.querySelector('.loading-logo');
+    const loadingProgress = document.querySelector('.loading-progress');
+
+    // Cinematic logo reveal
+    if (loadingLogo) {
+        gsap.from(loadingLogo, {
+            opacity: 0,
+            scale: 0.2,
+            rotation: -20,
+            duration: 0.8,
+            ease: 'back.out'
+        });
+
+        // Pulsing glow effect
+        gsap.to(loadingLogo, {
+            textShadow: [
+                '0 0 20px rgba(0, 217, 255, 0.5)',
+                '0 0 40px rgba(187, 0, 255, 0.4)',
+                '0 0 20px rgba(0, 217, 255, 0.5)'
+            ],
+            duration: 2,
+            repeat: -1,
+            ease: 'sine.inOut'
+        });
     }
-];
 
-const processSteps = [
-    { step: 1, title: "Discovery", description: "Understanding your goals, audience, and brand." },
-    { step: 2, title: "Strategy", description: "Developing comprehensive solutions tailored to you." },
-    { step: 3, title: "Creation", description: "Bringing ideas to life with creativity and precision." },
-    { step: 4, title: "Launch", description: "Delivering excellence and ongoing support." }
-];
-
-const pricingPlans = [
-    {
-        name: "Starter",
-        price: "$2,999",
-        description: "Perfect for small projects and startups",
-        features: ["UI/UX Design", "2 Revisions", "Responsive Design", "Assets Delivery"],
-        featured: false
-    },
-    {
-        name: "Professional",
-        price: "$7,999",
-        description: "Ideal for growing businesses",
-        features: ["Everything in Starter", "Development", "6 Revisions", "3 Months Support", "SEO Optimization"],
-        featured: true
-    },
-    {
-        name: "Enterprise",
-        price: "Custom",
-        description: "For complex, large-scale projects",
-        features: ["Everything in Professional", "Custom Solutions", "Unlimited Revisions", "12 Months Support", "Team Collaboration"],
-        featured: false
+    // Smooth progress bar animation
+    if (loadingProgress) {
+        gsap.to(loadingProgress, {
+            width: '100%',
+            duration: 2,
+            ease: 'cubic.out'
+        });
     }
-];
 
-const galleryItems = [
-    { id: 1, title: "Brand Identity", category: "branding", icon: "🎨" },
-    { id: 2, title: "Web Design", category: "design", icon: "🖼️" },
-    { id: 3, title: "Development", category: "development", icon: "💻" },
-    { id: 4, title: "Motion Graphics", category: "design", icon: "🎬" },
-    { id: 5, title: "App Interface", category: "design", icon: "📱" },
-    { id: 6, title: "Full Stack", category: "development", icon: "🔧" },
-    { id: 7, title: "UX Research", category: "design", icon: "🔍" },
-    { id: 8, title: "Cloud Solutions", category: "development", icon: "☁️" }
-];
+    // Hide loading screen with blur transition
+    setTimeout(() => {
+        gsap.to(loadingScreen, {
+            opacity: 0,
+            backdropFilter: 'blur(10px)',
+            duration: 0.8,
+            ease: 'power2.inOut',
+            onComplete: () => {
+                loadingScreen.classList.add('hidden');
+                isLoadingComplete = true;
+                
+                // Trigger initial page animations after loading completes
+                animatePageElements();
+            }
+        });
+    }, animConfig.loadingDuration);
+}
 
-const teamMembers = [
-    {
-        name: "Alex Chen",
-        role: "Creative Director",
-        bio: "Passionate about transforming ideas into visual experiences",
-        emoji: "👨‍🎨",
-        socials: { instagram: "#", twitter: "#", linkedin: "#" }
-    },
-    {
-        name: "Sarah Johnson",
-        role: "Lead Developer",
-        bio: "Full-stack expert with 8+ years of experience",
-        emoji: "👩‍💻",
-        socials: { instagram: "#", twitter: "#", linkedin: "#" }
-    },
-    {
-        name: "Marcus Williams",
-        role: "UX Designer",
-        bio: "Obsessed with user-centered design and accessibility",
-        emoji: "👨‍🎓",
-        socials: { instagram: "#", twitter: "#", linkedin: "#" }
-    },
-    {
-        name: "Emma Davis",
-        role: "Brand Strategist",
-        bio: "Helping brands tell their story through strategy",
-        emoji: "👩‍💼",
-        socials: { instagram: "#", twitter: "#", linkedin: "#" }
+// ===== LENIS SMOOTH SCROLL INITIALIZATION =====
+function initLenis() {
+    lenis = new Lenis({
+        duration: 0.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        mouseMultiplier: 2.5,
+        smoothTouch: true,
+        touchMultiplier: 4.0,
+        infinite: false
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
     }
-];
+    requestAnimationFrame(raf);
 
-const testimonials = [
-    {
-        text: "Clav transformed our digital presence. Absolutely amazing work!",
-        author: "John Smith",
-        role: "CEO, TechStartup",
-        stars: "⭐⭐⭐⭐⭐"
-    },
-    {
-        text: "Professional, creative, and delivered beyond our expectations.",
-        author: "Emma Wilson",
-        role: "Marketing Director, Global Corp",
-        stars: "⭐⭐⭐⭐⭐"
-    },
-    {
-        text: "The best investment we made for our brand. Highly recommended!",
-        author: "David Brown",
-        role: "Founder, Innovation Labs",
-        stars: "⭐⭐⭐⭐⭐"
+    // Integrate with GSAP ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+}
+
+// ===== ADVANCED CUSTOM CURSOR WITH PARTICLE TRAIL =====
+function initCustomCursor() {
+    const cursor = document.getElementById('cursor');
+    const cursorFollower = document.getElementById('cursorFollower');
+
+    if (!cursor || !cursorFollower) return;
+
+    // Cursor particle trail system
+    let particles = [];
+    const particlePool = [];
+
+    function createParticle(x, y) {
+        if (particles.length > animConfig.particleCount) {
+            const p = particles.shift();
+            p.element.remove();
+        }
+
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: rgba(0, 217, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9997;
+            left: ${x}px;
+            top: ${y}px;
+            box-shadow: 0 0 8px rgba(0, 217, 255, 0.8);
+        `;
+        document.body.appendChild(particle);
+
+        gsap.to(particle, {
+            opacity: 0,
+            scale: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            onComplete: () => {
+                particle.remove();
+            }
+        });
+
+        particles.push({ element: particle, x, y });
     }
-];
 
-const stats = [
-    { number: "150+", label: "Projects Completed", description: "Delivered excellence consistently" },
-    { number: "50+", label: "Happy Clients", description: "Trust and satisfaction guaranteed" },
-    { number: "8+", label: "Years Experience", description: "Proven track record" },
-    { number: "24/7", label: "Support Available", description: "Always here to help" }
-];
+    // Track mouse movement
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        
+        // Create particle trail every 10px
+        if (Math.random() > 0.7) {
+            createParticle(mouseX, mouseY);
+        }
+    });
+
+    // Smooth cursor animation
+    function animateCursor() {
+        cursorX += (mouseX - cursorX) * animConfig.cursorSpeed;
+        cursorY += (mouseY - cursorY) * animConfig.cursorSpeed;
+
+        cursor.style.left = cursorX + 'px';
+        cursor.style.top = cursorY + 'px';
+
+        followerX += (mouseX - followerX) * animConfig.cursorFollowerSpeed;
+        followerY += (mouseY - followerY) * animConfig.cursorFollowerSpeed;
+
+        cursorFollower.style.left = followerX + 'px';
+        cursorFollower.style.top = followerY + 'px';
+
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Interactive cursor on hover
+    const interactiveElements = document.querySelectorAll('a, button, .cta-button, input, textarea, .project-card, .service-card');
+    interactiveElements.forEach((el) => {
+        el.addEventListener('mouseenter', () => {
+            cursor.style.opacity = '0.2';
+            cursorFollower.style.boxShadow = '0 0 25px rgba(0, 217, 255, 0.8)';
+            gsap.to(cursorFollower, { scale: 1.5, duration: 0.2 });
+        });
+        el.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '1';
+            cursorFollower.style.boxShadow = '0 0 10px rgba(0, 217, 255, 0.4)';
+            gsap.to(cursorFollower, { scale: 1, duration: 0.2 });
+        });
+    });
+}
+
+// ===== PREMIUM NAVBAR WITH SMART BEHAVIOR =====
+function initNavbar() {
+    const navbar = document.getElementById('navbar');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const navbarMenu = document.getElementById('navbarMenu');
+
+    // Update active link
+    navLinks.forEach((link) => {
+        link.classList.remove('active');
+        const href = link.getAttribute('href').toLowerCase();
+        if (currentPage === 'home' && href.includes('index')) {
+            link.classList.add('active');
+        } else if (href.includes(currentPage)) {
+            link.classList.add('active');
+        }
+    });
+
+    // Mobile menu toggle
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', () => {
+            navbarMenu.style.display = navbarMenu.style.display === 'flex' ? 'none' : 'flex';
+            mobileMenuToggle.classList.toggle('active');
+            
+            // Animate menu items
+            gsap.from(navbarMenu.querySelectorAll('li'), {
+                opacity: 0,
+                y: -20,
+                stagger: 0.08,
+                duration: 0.4
+            });
+        });
+    }
+
+    // Smart navbar hide/show on scroll
+    let lastScrollY = 0;
+    if (lenis) {
+        lenis.on('scroll', (e) => {
+            const delta = e - lastScrollY;
+            if (delta > 100) {
+                navbar.classList.add('hidden');
+                lastScrollY = e;
+            } else if (delta < -100) {
+                navbar.classList.remove('hidden');
+                lastScrollY = e;
+            }
+        });
+    }
+
+    // Navbar glow on mouse position
+    document.addEventListener('mousemove', (e) => {
+        if (navbar && isLoadingComplete) {
+            const navRect = navbar.getBoundingClientRect();
+            const distance = Math.hypot(
+                e.clientX - navRect.left - navRect.width / 2,
+                e.clientY - navRect.top - navRect.height / 2
+            );
+            
+            if (distance < 300) {
+                const opacity = Math.max(0, 1 - distance / 300) * 0.2;
+                navbar.style.boxShadow = `0 10px 40px rgba(0, 217, 255, ${0.08 + opacity}), inset 0 1px 0 rgba(255, 255, 255, 0.08)`;
+            } else {
+                navbar.style.boxShadow = `0 10px 40px rgba(0, 217, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.08)`;
+            }
+        }
+    });
+}
+
+// ===== HERO SECTION ANIMATIONS =====
+function initHeroSection() {
+    const hero = document.getElementById('hero');
+    if (!hero) return;
+
+    // Parallax layers
+    const parallaxLayers = document.querySelectorAll('.parallax-layer');
+    parallaxLayers.forEach((layer) => {
+        const depth = parseFloat(layer.getAttribute('data-depth')) || 0;
+        gsap.to(layer, {
+            y: () => window.innerHeight * depth * 0.3,
+            scrollTrigger: {
+                trigger: hero,
+                start: 'top top',
+                end: 'bottom center',
+                scrub: 1,
+                onUpdate: (self) => {
+                    const progress = self.progress;
+                    layer.style.transform = `translateY(${progress * 100 * depth}px)`;
+                }
+            }
+        });
+    });
+
+    // Generate particles
+    generateHeroParticles();
+
+    // Scroll indicator animation
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (scrollIndicator) {
+        gsap.to(scrollIndicator, {
+            y: 10,
+            opacity: 0.5,
+            duration: 1.5,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut'
+        });
+    }
+}
+
+// Generate floating particles in hero
+function generateHeroParticles() {
+    const container = document.getElementById('particlesContainer');
+    if (!container) return;
+
+    for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.width = Math.random() * 4 + 2 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        
+        const delay = Math.random() * 3;
+        particle.style.setProperty('--delay', delay + 's');
+        
+        gsap.to(particle, {
+            y: -Math.random() * 200 - 100,
+            opacity: [0, 0.6, 0],
+            duration: Math.random() * 3 + 2,
+            repeat: -1,
+            delay: delay,
+            ease: 'sine.inOut'
+        });
+
+        container.appendChild(particle);
+    }
+}
+
+// ===== FEATURED PROJECTS RENDER WITH 3D EFFECTS =====
+function renderFeaturedProjects() {
+    const grid = document.getElementById('featuredGrid');
+    if (!grid) return;
+
+    const featuredProjects = projects.slice(0, 3);
+    grid.innerHTML = '';
+
+    featuredProjects.forEach((project, index) => {
+        const card = document.createElement('a');
+        card.href = '#';
+        card.className = 'project-card';
+        card.onclick = (e) => {
+            e.preventDefault();
+            // Animated transition to project page
+            gsap.to(card, {
+                scale: 1.05,
+                duration: 0.2,
+                onComplete: () => navigateToProject(project.id)
+            });
+        };
+
+        card.innerHTML = `
+            <div class="project-image-wrapper">
+                <img src="${project.image}" alt="${project.title}" class="project-image" onerror="this.src='img/placeholder.svg'">
+            </div>
+            <div class="project-info">
+                <h3 class="project-title">${project.title}</h3>
+                <div class="project-meta">
+                    <span class="project-year">${project.year}</span>
+                    <span class="project-category">${capitalizeText(project.category)}</span>
+                </div>
+            </div>
+        `;
+
+        grid.appendChild(card);
+
+        // 3D tilt effect on mouse move
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -12;
+            const rotateY = ((x - centerX) / centerX) * 12;
+
+            gsap.to(card, {
+                rotateX: rotateX,
+                rotateY: rotateY,
+                y: -15,
+                duration: 0.4,
+                ease: 'power2.out',
+                transformPerspective: 1200
+            });
+
+            gsap.to(card.querySelector('.project-image'), {
+                scale: 1.1,
+                duration: 0.4,
+                ease: 'power2.out'
+            });
+        });
+
+        card.addEventListener('mouseleave', () => {
+            gsap.to(card, {
+                rotateX: 0,
+                rotateY: 0,
+                y: 0,
+                duration: 0.6,
+                ease: 'elastic.out(1, 0.6)'
+            });
+            gsap.to(card.querySelector('.project-image'), {
+                scale: 1,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+        });
+    });
+}
+
+// ===== MAGNETIC BUTTON EFFECTS =====
+function initMagneticButtons() {
+    const buttons = document.querySelectorAll('.magnetic-btn, .cta-button');
+    
+    buttons.forEach((button) => {
+        let bounds;
+        
+        button.addEventListener('mouseenter', () => {
+            bounds = button.getBoundingClientRect();
+        });
+        
+        button.addEventListener('mousemove', (e) => {
+            if (!bounds) return;
+            
+            const x = e.clientX - bounds.left - bounds.width / 2;
+            const y = e.clientY - bounds.top - bounds.height / 2;
+            
+            const distance = Math.sqrt(x * x + y * y);
+            const maxDistance = Math.sqrt(
+                bounds.width * bounds.width + bounds.height * bounds.height
+            ) / 2;
+            
+            if (distance < maxDistance * 1.5) {
+                const force = 1 - distance / (maxDistance * 1.5);
+                gsap.to(button, {
+                    x: x * force * animConfig.magneticForce,
+                    y: y * force * animConfig.magneticForce,
+                    duration: 0.3,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                });
+            }
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            gsap.to(button, {
+                x: 0,
+                y: 0,
+                duration: 0.5,
+                ease: 'elastic.out(1, 0.6)'
+            });
+        });
+    });
+}
+
+// ===== SCROLL TRIGGER ANIMATIONS =====
+function initScrollAnimations() {
+    // Fade in sections on scroll
+    gsap.utils.toArray('section').forEach((section) => {
+        gsap.from(section, {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: section,
+                start: 'top 80%',
+                end: 'top 20%',
+                scrub: false,
+                markers: false
+            }
+        });
+    });
+
+    // Parallax effect on images
+    gsap.utils.toArray('.parallax-image').forEach((img) => {
+        gsap.to(img, {
+            y: () => img.offsetHeight * 0.2,
+            scrollTrigger: {
+                trigger: img,
+                start: 'top center',
+                end: 'bottom center',
+                scrub: 1,
+                markers: false
+            }
+        });
+    });
+}
+
+// ===== PAGE ELEMENT ANIMATIONS AFTER LOADING =====
+function animatePageElements() {
+    // Hero title word reveal
+    const titleWords = document.querySelectorAll('.text-reveal-word');
+    if (titleWords.length > 0) {
+        gsap.to(titleWords, {
+            opacity: 1,
+            y: 0,
+            stagger: animConfig.staggerDelay,
+            duration: 0.8,
+            ease: 'back.out'
+        });
+    }
+
+    // Fade in content
+    gsap.from('.hero-subtitle, .hero-cta', {
+        opacity: 0,
+        y: 20,
+        stagger: 0.1,
+        duration: 0.8,
+        delay: 0.4,
+        ease: 'power2.out'
+    });
+
+    // Animate project cards
+    const cards = document.querySelectorAll('.project-card');
+    if (cards.length > 0) {
+        gsap.from(cards, {
+            opacity: 0,
+            y: 30,
+            stagger: animConfig.staggerDelay,
+            duration: 0.8,
+            delay: 0.2,
+            ease: 'back.out',
+            scrollTrigger: {
+                trigger: '.featured-grid',
+                start: 'top 80%'
+            }
+        });
+    }
+}
+
+// ===== INIT: RENDER PROJECT DATA =====
+function renderProjects() {
+    const projectsList = document.querySelector('.projects-list');
+    if (!projectsList) return;
+
+    projectsList.innerHTML = '';
+    const filteredProjects = activeFilter === 'all' 
+        ? projects 
+        : projects.filter(p => p.category.toLowerCase() === activeFilter.toLowerCase());
+
+    filteredProjects.forEach((project, index) => {
+        const card = document.createElement('a');
+        card.href = '#';
+        card.className = 'project-card';
+        card.style.animationDelay = `${index * animConfig.staggerDelay}s`;
+        card.onclick = (e) => {
+            e.preventDefault();
+            navigateToProject(project.id);
+        };
+
+        card.innerHTML = `
+            <div class="project-image-wrapper">
+                <img src="${project.image}" alt="${project.title}" class="project-image" onerror="this.src='img/placeholder.svg'">
+            </div>
+            <div class="project-info">
+                <h3 class="project-title">${project.title}</h3>
+                <div class="project-meta">
+                    <span class="project-year">${project.year}</span>
+                    <span class="project-category">${capitalizeText(project.category)}</span>
+                </div>
+            </div>
+        `;
+
+        projectsList.appendChild(card);
+    });
+}
+
+// ===== INIT: RENDER SERVICES =====
+function renderServices() {
+    const servicesGrid = document.querySelector('.services-grid');
+    if (!servicesGrid) return;
+
+    servicesGrid.innerHTML = '';
+    services.forEach((service, index) => {
+        const card = document.createElement('div');
+        card.className = 'service-card';
+        card.style.animationDelay = `${index * animConfig.staggerDelay}s`;
+        card.innerHTML = `
+            <div class="service-icon">${service.icon}</div>
+            <h3 class="service-title">${service.title}</h3>
+            <p class="service-description">${service.description}</p>
+        `;
+        servicesGrid.appendChild(card);
+    });
+}
+
+// ===== RESPONSIVE DESIGN HANDLER =====
+function handleResponsive() {
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    if (window.innerWidth <= 768) {
+        if (mobileMenuToggle) mobileMenuToggle.style.display = 'flex';
+    } else {
+        if (mobileMenuToggle) mobileMenuToggle.style.display = 'none';
+        const navbarMenu = document.getElementById('navbarMenu');
+        if (navbarMenu) navbarMenu.style.display = 'flex';
+    }
+}
+
+// ===== MAIN INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', () => {
+    initLoadingScreen();
+    initLenis();
+    initCustomCursor();
+    initNavbar();
+    initHeroSection();
+    initMagneticButtons();
+    initScrollAnimations();
+
+    // Render page-specific content
+    renderFeaturedProjects();
+    renderProjects();
+    renderServices();
+
+    // Handle responsive
+    handleResponsive();
+    window.addEventListener('resize', handleResponsive);
+
+    // Add scroll progress indicator
+    gsap.ticker.add(() => {
+        const scrollProgress = lenis.actualScroll / (document.documentElement.scrollHeight - window.innerHeight);
+        const progressBar = document.querySelector('.scroll-progress');
+        if (progressBar) {
+            progressBar.style.width = scrollProgress * 100 + '%';
+        }
+    });
+});
+
+// Utility: Project data (from previous script)
 const projects = [
     {
         id: 1,
@@ -166,7 +690,7 @@ const projects = [
     {
         id: 2,
         title: "Company Profile Project",
-        category: "Development",
+        category: "Design",
         year: "2024",
         image: "img/project2.png",
         description: "Elegant branding and design system for luxury hospitality brand. Focused on minimalism and premium user experience.",
@@ -215,257 +739,45 @@ const projects = [
     }
 ];
 
-// ===== EDITABLE: ANIMATION CONFIG =====
-const animConfig = {
-    cursorSpeed: 0.12,              // Cursor follow speed (lower = smoother)
-    cursorFollowerSpeed: 0.06,      // Follower speed
-    lenisSmoothness: 1.2,          // Scroll smoothness (1-2)
-    loadingDuration: 2000,         // Loading screen duration (ms)
-    hoverScaleAmount: 1.05,        // Image hover zoom
-    magneticForce: 0.3,            // Magnetic button force
-    scrollAnimDuration: 0.8,       // Scroll animation duration
-    staggerDelay: 0.1              // Stagger delay between elements
-};
-
-// ===== STATE MANAGEMENT =====
-let mouseX = 0;
-let mouseY = 0;
-let cursorX = 0;
-let cursorY = 0;
-let followerX = 0;
-let followerY = 0;
-let lenis = null;
-let activeFilter = 'all';
-let currentPage = getCurrentPage();
-
-// ===== UTILITY: GET CURRENT PAGE =====
-function getCurrentPage() {
-    const path = window.location.pathname;
-    if (path.includes('work')) return 'work';
-    if (path.includes('about')) return 'about';
-    if (path.includes('services')) return 'services';
-    if (path.includes('gallery')) return 'gallery';
-    if (path.includes('team')) return 'team';
-    if (path.includes('project')) return 'project';
-    if (path.includes('contact')) return 'contact';
-    return 'home';
-}
-
-// ===== INIT: LOADING SCREEN WITH ANIMATIONS =====
-function initLoadingScreen() {
-    const loadingScreen = document.getElementById('loadingScreen');
-    const loadingLogo = document.querySelector('.loading-logo');
-    const loadingProgress = document.querySelector('.loading-progress');
-    
-    // Animate logo
-    if (loadingLogo) {
-        gsap.from(loadingLogo, {
-            opacity: 0,
-            scale: 0.5,
-            rotation: -10,
-            duration: 0.6,
-            ease: 'back.out'
-        });
-
-        // Add glow effect to logo
-        gsap.to(loadingLogo, {
-            textShadow: '0 0 20px rgba(0, 217, 255, 0.5)',
-            duration: 1.5,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut'
-        });
+// Services data
+const services = [
+    {
+        id: 1,
+        title: "UI/UX Design",
+        description: "Beautiful and functional interfaces that delight users and drive conversions.",
+        icon: "🎨"
+    },
+    {
+        id: 2,
+        title: "Web Development",
+        description: "Fast, responsive, and modern websites built with the latest technologies.",
+        icon: "💻"
+    },
+    {
+        id: 3,
+        title: "Branding",
+        description: "Complete brand identity solutions including logos, guidelines, and materials.",
+        icon: "✨"
+    },
+    {
+        id: 4,
+        title: "Motion Design",
+        description: "Eye-catching animations and motion graphics that bring stories to life.",
+        icon: "🎬"
+    },
+    {
+        id: 5,
+        title: "Strategy Consulting",
+        description: "Data-driven insights to help you reach your business goals and maximize growth.",
+        icon: "🎯"
+    },
+    {
+        id: 6,
+        title: "3D Visualization",
+        description: "Immersive 3D renderings and visualizations for products and spaces.",
+        icon: "🌐"
     }
-    
-    setTimeout(() => {
-        gsap.to(loadingScreen, {
-            opacity: 0,
-            duration: 0.5,
-            ease: 'power2.inOut',
-            onComplete: () => {
-                loadingScreen.classList.add('hidden');
-            }
-        });
-    }, animConfig.loadingDuration);
-}
-
-// ===== INIT: LENIS SMOOTH SCROLL =====
-function initLenis() {
-    lenis = new Lenis({
-        duration: 0.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: 'vertical',
-        gestureDirection: 'vertical',
-        smooth: true,
-        mouseMultiplier: 2.5,
-        smoothTouch: true,
-        touchMultiplier: 4.0,
-        infinite: false,
-    });
-
-    function raf(time) {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    gsap.registerPlugin(ScrollTrigger);
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-}
-
-// ===== INIT: CUSTOM CURSOR =====
-function initCustomCursor() {
-    const cursor = document.getElementById('cursor');
-    const cursorFollower = document.getElementById('cursorFollower');
-
-    if (!cursor || !cursorFollower) return;
-
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    function animateCursor() {
-        cursorX += (mouseX - cursorX) * animConfig.cursorSpeed;
-        cursorY += (mouseY - cursorY) * animConfig.cursorSpeed;
-
-        cursor.style.left = cursorX + 'px';
-        cursor.style.top = cursorY + 'px';
-
-        followerX += (mouseX - followerX) * animConfig.cursorFollowerSpeed;
-        followerY += (mouseY - followerY) * animConfig.cursorFollowerSpeed;
-
-        cursorFollower.style.left = followerX + 'px';
-        cursorFollower.style.top = followerY + 'px';
-
-        requestAnimationFrame(animateCursor);
-    }
-
-    animateCursor();
-
-    // Hide on elements
-    const interactiveElements = document.querySelectorAll('a, button, .cta-button, input, textarea');
-    interactiveElements.forEach((el) => {
-        el.addEventListener('mouseenter', () => {
-            cursor.style.opacity = '0.3';
-            cursorFollower.style.opacity = '0.8';
-        });
-        el.addEventListener('mouseleave', () => {
-            cursor.style.opacity = '1';
-            cursorFollower.style.opacity = '0.5';
-        });
-    });
-}
-
-// ===== INIT: NAVBAR =====
-function initNavbar() {
-    const navbar = document.getElementById('navbar');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const navbarMenu = document.getElementById('navbarMenu');
-
-    // Update active link based on current page
-    navLinks.forEach((link) => {
-        link.classList.remove('active');
-        const href = link.getAttribute('href');
-        if (currentPage === 'home' && href === 'index.html') {
-            link.classList.add('active');
-        } else if (href.includes(currentPage)) {
-            link.classList.add('active');
-        }
-    });
-
-    // Mobile menu toggle
-    if (mobileMenuToggle) {
-        mobileMenuToggle.addEventListener('click', () => {
-            navbarMenu.style.display = navbarMenu.style.display === 'flex' ? 'none' : 'flex';
-            mobileMenuToggle.classList.toggle('active');
-        });
-    }
-
-    // Hide navbar on scroll down, show on scroll up
-    let lastScrollY = 0;
-    if (lenis) {
-        lenis.on('scroll', (e) => {
-            if (e > lastScrollY + 100) {
-                navbar.classList.add('hidden');
-                lastScrollY = e;
-            } else if (e < lastScrollY - 100) {
-                navbar.classList.remove('hidden');
-                lastScrollY = e;
-            }
-        });
-    }
-}
-
-// ===== RENDER: FEATURED PROJECTS (HOME PAGE) =====
-function renderFeaturedProjects() {
-    const grid = document.getElementById('featuredGrid');
-    if (!grid) return;
-
-    const featuredProjects = projects.slice(0, 3);
-    grid.innerHTML = '';
-
-    featuredProjects.forEach((project, index) => {
-        const card = document.createElement('a');
-        card.href = '#';
-        card.className = 'project-card';
-        card.style.animationDelay = `${index * 0.1}s`;
-        card.onclick = (e) => {
-            e.preventDefault();
-            navigateToProject(project.id);
-        };
-
-        card.innerHTML = `
-            <div class="project-image-wrapper">
-                <img src="${project.image}" alt="${project.title}" class="project-image" onerror="this.src='img/placeholder.svg'">
-            </div>
-            <div class="project-info">
-                <h3 class="project-title">${project.title}</h3>
-                <div class="project-meta">
-                    <span class="project-year">${project.year}</span>
-                    <span class="project-category">${capitalizeText(project.category)}</span>
-                </div>
-            </div>
-        `;
-
-        grid.appendChild(card);
-
-        // Add hover animations with GSAP
-        card.addEventListener('mouseenter', () => {
-            gsap.to(card, {
-                y: -15,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-            
-            gsap.to(card.querySelector('.project-image'), {
-                scale: 1.1,
-                duration: 0.5,
-                ease: 'power2.out'
-            });
-        });
-
-        card.addEventListener('mouseleave', () => {
-            gsap.to(card, {
-                y: 0,
-                duration: 0.3,
-                ease: 'power2.out'
-            });
-            
-            gsap.to(card.querySelector('.project-image'), {
-                scale: 1,
-                duration: 0.5,
-                ease: 'power2.out'
-            });
-        });
-    });
-}
+];
 
 // ===== RENDER: ALL PROJECTS (WORK PAGE) =====
 function renderAllProjects(filterType = 'all') {
@@ -503,33 +815,64 @@ function renderAllProjects(filterType = 'all') {
 
         list.appendChild(card);
 
-        // Add hover animations with GSAP
-        card.addEventListener('mouseenter', () => {
+        // Add 3D hover animations with GSAP
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Calculate rotation based on cursor position relative to center
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg
+            const rotateY = ((x - centerX) / centerX) * 10;
+            
             gsap.to(card, {
-                y: -15,
+                rotateX: rotateX,
+                rotateY: rotateY,
+                y: -10,
                 boxShadow: '0 20px 50px rgba(0, 217, 255, 0.2)',
-                duration: 0.3,
+                duration: 0.4,
+                ease: 'power2.out',
+                transformPerspective: 1200
+            });
+            
+            // Parallax effect on image wrapper
+            gsap.to(card.querySelector('.project-image-wrapper'), {
+                x: ((x - centerX) / centerX) * 5,
+                y: ((y - centerY) / centerY) * 5,
+                duration: 0.4,
                 ease: 'power2.out'
             });
             
             gsap.to(card.querySelector('.project-image'), {
-                scale: 1.1,
-                duration: 0.5,
+                scale: 1.08,
+                duration: 0.4,
                 ease: 'power2.out'
             });
         });
 
         card.addEventListener('mouseleave', () => {
             gsap.to(card, {
+                rotateX: 0,
+                rotateY: 0,
                 y: 0,
                 boxShadow: '0 0 0px rgba(0, 217, 255, 0)',
-                duration: 0.3,
-                ease: 'power2.out'
+                duration: 0.6,
+                ease: 'elastic.out(1, 0.5)'
+            });
+            
+            gsap.to(card.querySelector('.project-image-wrapper'), {
+                x: 0,
+                y: 0,
+                duration: 0.6,
+                ease: 'elastic.out(1, 0.5)'
             });
             
             gsap.to(card.querySelector('.project-image'), {
                 scale: 1,
-                duration: 0.5,
+                duration: 0.6,
                 ease: 'power2.out'
             });
         });
@@ -1441,6 +1784,99 @@ function capitalizeText(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+// ===== INIT: 3D HERO PARALLAX =====
+function init3DParallaxHero() {
+    const hero = document.getElementById('hero');
+    if (!hero) return;
+
+    const layers = hero.querySelectorAll('.parallax-layer');
+    
+    hero.addEventListener('mousemove', (e) => {
+        const rect = hero.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Normalize mouse coordinates from -1 to 1
+        const mouseX = (e.clientX - centerX) / (rect.width / 2);
+        const mouseY = (e.clientY - centerY) / (rect.height / 2);
+
+        layers.forEach(layer => {
+            const depth = parseFloat(layer.getAttribute('data-depth')) || 0.2;
+            const x = mouseX * 20 * depth;
+            const y = mouseY * 20 * depth;
+            const rotateX = -mouseY * 2 * depth;
+            const rotateY = mouseX * 2 * depth;
+
+            gsap.to(layer, {
+                x: x,
+                y: y,
+                rotateX: rotateX,
+                rotateY: rotateY,
+                duration: 0.8,
+                ease: 'power2.out',
+                overwrite: 'auto'
+            });
+        });
+    });
+
+    hero.addEventListener('mouseleave', () => {
+        layers.forEach(layer => {
+            gsap.to(layer, {
+                x: 0,
+                y: 0,
+                rotateX: 0,
+                rotateY: 0,
+                duration: 1,
+                ease: 'elastic.out(1, 0.5)',
+                overwrite: 'auto'
+            });
+        });
+    });
+}
+
+// ===== INIT: HERO PARTICLES =====
+function initHeroParticles() {
+    const container = document.getElementById('particlesContainer');
+    if (!container) return;
+
+    const particleCount = 30;
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < particleCount; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        
+        // Random properties
+        const size = Math.random() * 4 + 1;
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const z = (Math.random() - 0.5) * 500;
+        const duration = Math.random() * 10 + 10;
+        
+        p.style.width = `${size}px`;
+        p.style.height = `${size}px`;
+        p.style.left = `${left}%`;
+        p.style.top = `${top}%`;
+        p.style.transform = `translateZ(${z}px)`;
+
+        fragment.appendChild(p);
+
+        // Animate drifting
+        gsap.to(p, {
+            y: `-=${Math.random() * 100 + 50}`,
+            x: `+=${(Math.random() - 0.5) * 50}`,
+            rotation: Math.random() * 360,
+            duration: duration,
+            repeat: -1,
+            yoyo: true,
+            ease: 'sine.inOut',
+            delay: Math.random() * -10 // Random start time
+        });
+    }
+
+    container.appendChild(fragment);
+}
+
 // ===== INIT: ALL ON PAGE LOAD =====
 function init() {
     // Core
@@ -1452,6 +1888,8 @@ function init() {
 
     // Page-specific
     if (currentPage === 'home') {
+        init3DParallaxHero();
+        initHeroParticles();
         renderFeaturedProjects();
         animateOnScroll();
         initHomePageAnimations();

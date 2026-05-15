@@ -61,8 +61,13 @@
 
         <!-- Hero Section -->
         <section class="hero" id="hero">
-            <div class="hero-content">
-                <div class="hero-image-container">
+            <!-- 3D Background Layers -->
+            <div class="hero-bg-layer parallax-layer" data-depth="0.1"></div>
+            <div class="hero-glow-orb parallax-layer" data-depth="0.3"></div>
+            <div class="hero-particles" id="particlesContainer"></div>
+            
+            <div class="hero-content hero-front-layer parallax-layer" data-depth="0.8">
+                <div class="hero-image-container parallax-layer" data-depth="1.2">
                     <img src="img/profile.jpeg" alt="Clavin" class="hero-image" id="heroImage">
                     <div class="hero-image-border"></div>
                 </div>
@@ -76,11 +81,12 @@
                     Crafted with precision. Designed for impact.
                 </p>
                 <div class="hero-cta">
-                    <a href="work.html" class="cta-button primary-btn">Explore Work</a>
-                    <a href="contact.html" class="cta-button secondary-btn">Get in Touch</a>
+                    <a href="work.html" class="cta-button primary-btn glass-btn">Explore Work</a>
+                    <a href="contact.html" class="cta-button secondary-btn magnetic-btn">Get in Touch</a>
                 </div>
             </div>
-            <div class="scroll-indicator">
+            
+            <div class="scroll-indicator parallax-layer" data-depth="0.5">
                 <span>Scroll</span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M8 2v10M8 12l-2-2M8 12l2-2" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>

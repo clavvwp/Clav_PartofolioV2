@@ -1,22 +1,26 @@
 /*
 ========================================
 CLAV PREMIUM PORTFOLIO - script.js
-VERSION: 4.0 (ULTRA CINEMATIC 3D)
+VERSION: 5.0 (ULTIMATE CINEMATIC EDITION)
 
-🚀 COMPLETE REFACTOR:
-✔ Advanced 3D mouse tilt
-✔ Cinematic animations
-✔ Performance optimized
-✔ Smooth scroll with Lenis
-✔ GSAP ScrollTrigger
-✔ Interactive cursor
-✔ Magnetic buttons
-✔ All bugs fixed
+✨ MERGED & OPTIMIZED:
+✔ Advanced 3D mouse tilt & parallax
+✔ Ultra-smooth Lenis scroll
+✔ GSAP ScrollTrigger animations
+✔ Interactive magnetic cursor
+✔ Magnetic buttons with glow
+✔ Particle systems optimization
+✔ Mobile-optimized performance
+✔ Responsive animations
+✔ Enhanced features from v3 + v4
+✔ All edge cases handled
+✔ Better memory management
+✔ Improved animations
 
 ========================================
 */
 
-// ===== ANIMATION CONFIG =====
+// ===== PREMIUM ANIMATION CONFIG =====
 const animConfig = {
     cursorSpeed: 0.12,
     cursorFollowerSpeed: 0.06,
@@ -29,7 +33,8 @@ const animConfig = {
     particleCount: 50,
     mouseTrailDistance: 30,
     tiltMaxAngle: 25,
-    tiltSpeed: 0.3
+    tiltSpeed: 0.3,
+    isMobile: window.innerWidth <= 768
 };
 
 // ===== GLOBAL STATE =====
@@ -38,8 +43,9 @@ let lenis = null, activeFilter = 'all', currentPage = getCurrentPage();
 let isLoadingComplete = false;
 let magneticButtons = [];
 let resizeTimeout = null;
+let particlePool = [];
 
-// Get current page
+// Get current page from URL
 function getCurrentPage() {
     const path = window.location.pathname.toLowerCase();
     if (path.includes('work')) return 'work';
@@ -52,14 +58,23 @@ function getCurrentPage() {
     return 'home';
 }
 
-// Capitalize text
+// Capitalize text utility
 function capitalizeText(text) {
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
+// Navigate to project detail page
+function navigateToProject(projectId) {
+    window.location.href = `project.html?id=${projectId}`;
+}
+
+// Check if device is mobile
+function isMobileDevice() {
+    return window.innerWidth <= 768;
+}
+
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize all features
     gsap.registerPlugin(ScrollTrigger);
     
     initLoadingScreen();
@@ -72,12 +87,15 @@ document.addEventListener('DOMContentLoaded', () => {
     init3DTilt();
     initScrollAnimations();
     
-    // Re-initialize on window resize
+    // Re-initialize on resize with debouncing
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
+            animConfig.isMobile = isMobileDevice();
             ScrollTrigger.refresh();
-            init3DTilt();
+            if (!animConfig.isMobile) {
+                init3DTilt();
+            }
         }, 250);
     });
 });
@@ -165,12 +183,19 @@ function initLenis() {
     gsap.ticker.lagSmoothing(0);
 }
 
-// ===== ADVANCED CUSTOM CURSOR =====
+// ===== CUSTOM CURSOR WITH PARTICLE TRAIL =====
 function initCustomCursor() {
     const cursor = document.getElementById('cursor');
     const cursorFollower = document.getElementById('cursorFollower');
 
     if (!cursor || !cursorFollower) return;
+
+    // Hide cursor on mobile
+    if (animConfig.isMobile) {
+        cursor.style.display = 'none';
+        cursorFollower.style.display = 'none';
+        return;
+    }
 
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
@@ -200,7 +225,7 @@ function initCustomCursor() {
     animateCursor();
 
     // Interactive cursor hover
-    const interactiveElements = document.querySelectorAll('a, button, .cta-button, input, textarea, .project-card, .service-card, .filter-tag');
+    const interactiveElements = document.querySelectorAll('a, button, .cta-button, input, textarea, .project-card, .service-card, .filter-tag, .gallery-item, .team-member');
     interactiveElements.forEach((el) => {
         el.addEventListener('mouseenter', () => {
             cursor.style.opacity = '0.2';
@@ -385,7 +410,9 @@ function generateHeroParticles() {
     const existingParticles = container.querySelectorAll('.particle');
     if (existingParticles.length > 0) return; // Already generated
 
-    for (let i = 0; i < 30; i++) {
+    // Reduce particles on mobile
+    const particleCount = animConfig.isMobile ? 15 : 30;
+    for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.width = Math.random() * 4 + 2 + 'px';
@@ -409,8 +436,10 @@ function generateHeroParticles() {
     }
 }
 
-// ===== 3D TILT EFFECT =====
+// ===== 3D TILT EFFECT (Desktop Only) =====
 function init3DTilt() {
+    if (animConfig.isMobile) return;
+    
     const tiltElements = document.querySelectorAll('.project-card, .service-card, .team-member, .gallery-item');
 
     tiltElements.forEach((element) => {
@@ -418,7 +447,6 @@ function init3DTilt() {
         element.classList.add('tilt-initialized');
 
         let bounds;
-        let tiltTimeline = null;
 
         element.addEventListener('mouseenter', () => {
             bounds = element.getBoundingClientRect();
@@ -435,10 +463,6 @@ function init3DTilt() {
             const rotateX = ((y - centerY) / centerY) * -animConfig.tiltMaxAngle;
             const rotateY = ((x - centerX) / centerX) * animConfig.tiltMaxAngle;
 
-            // Mouse follow light effect
-            const lightX = (x / bounds.width) * 100;
-            const lightY = (y / bounds.height) * 100;
-
             gsap.to(element, {
                 rotateX: rotateX,
                 rotateY: rotateY,
@@ -452,8 +476,8 @@ function init3DTilt() {
             const lightLayer = element.querySelector('.light-layer');
             if (lightLayer) {
                 gsap.to(lightLayer, {
-                    '--light-x': lightX + '%',
-                    '--light-y': lightY + '%',
+                    '--light-x': ((x / bounds.width) * 100) + '%',
+                    '--light-y': ((y / bounds.height) * 100) + '%',
                     duration: animConfig.tiltSpeed,
                     ease: 'power2.out'
                 });
@@ -494,7 +518,7 @@ function initMagneticButtons() {
         });
         
         button.addEventListener('mousemove', (e) => {
-            if (!bounds) return;
+            if (!bounds || animConfig.isMobile) return;
             
             const x = e.clientX - bounds.left - bounds.width / 2;
             const y = e.clientY - bounds.top - bounds.height / 2;
@@ -577,75 +601,298 @@ function initScrollAnimations() {
             }
         });
     });
+
+    // Animate service cards
+    const serviceCards = document.querySelectorAll('.service-card');
+    serviceCards.forEach((card, index) => {
+        gsap.from(card, {
+            opacity: 0,
+            y: 40,
+            scrollTrigger: {
+                trigger: card,
+                start: 'top 85%',
+                end: 'top 40%',
+                scrub: false,
+                onEnter: () => {
+                    gsap.to(card, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: index * 0.1,
+                        ease: 'power2.out'
+                    });
+                }
+            }
+        });
+    });
+
+    // Animate team members
+    const teamMembers = document.querySelectorAll('.team-member');
+    teamMembers.forEach((member, index) => {
+        gsap.from(member, {
+            opacity: 0,
+            y: 40,
+            scrollTrigger: {
+                trigger: member,
+                start: 'top 85%',
+                end: 'top 40%',
+                scrub: false,
+                onEnter: () => {
+                    gsap.to(member, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: index * 0.1,
+                        ease: 'power2.out'
+                    });
+                }
+            }
+        });
+    });
+
+    // Animate gallery items
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    galleryItems.forEach((item, index) => {
+        gsap.from(item, {
+            opacity: 0,
+            scale: 0.9,
+            scrollTrigger: {
+                trigger: item,
+                start: 'top 85%',
+                end: 'top 40%',
+                scrub: false,
+                onEnter: () => {
+                    gsap.to(item, {
+                        opacity: 1,
+                        scale: 1,
+                        duration: 0.8,
+                        delay: index * 0.05,
+                        ease: 'power2.out'
+                    });
+                }
+            }
+        });
+    });
+
+    // Animate skill items
+    const skillItems = document.querySelectorAll('.skill-item');
+    skillItems.forEach((item, index) => {
+        gsap.from(item, {
+            opacity: 0,
+            y: 30,
+            scrollTrigger: {
+                trigger: item,
+                start: 'top 85%',
+                end: 'top 40%',
+                scrub: false,
+                onEnter: () => {
+                    gsap.to(item, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: index * 0.1,
+                        ease: 'power2.out'
+                    });
+                }
+            }
+        });
+    });
 }
 
-// ===== GLOBAL UTILITIES =====
-function navigateToProject(projectId) {
-    window.location.href = `project.html?id=${projectId}`;
-}
-
-// ===== SAMPLE DATA (can be customized) =====
+// ===== PROJECT DATA =====
 const projects = [
     {
         id: 1,
-        title: 'Modern Portfolio Design',
-        category: 'design',
-        year: '2024',
-        image: 'img/project1.jpg'
+        title: "First Portofolio Project",
+        category: "development",
+        year: "2024",
+        image: "img/project1.png",
+        description: "A cutting-edge interactive platform designed for seamless user engagement. Built with modern web technologies and stunning animations.",
+        gallery: ["img/project1.png", "img/project2.png"],
+        role: "Design & Development"
     },
     {
         id: 2,
-        title: 'Web Application Platform',
-        category: 'development',
-        year: '2024',
-        image: 'img/project2.jpg'
+        title: "Company Profile Project",
+        category: "Design",
+        year: "2024",
+        image: "img/project2.png",
+        description: "Elegant branding and design system for luxury hospitality brand. Focused on minimalism and premium user experience.",
+        gallery: ["img/project2.png", "img/project3.png"],
+        role: "Design"
     },
     {
         id: 3,
-        title: 'Brand Identity System',
-        category: 'design',
-        year: '2023',
-        image: 'img/project3.jpg'
-    }
-];
-
-const services = [
-    {
-        id: 1,
-        title: 'Web Design',
-        description: 'Beautiful and functional web designs that captivate and convert.',
-        icon: '🎨'
-    },
-    {
-        id: 2,
-        title: 'Frontend Development',
-        description: 'High-performance, responsive web applications with modern tech.',
-        icon: '💻'
-    },
-    {
-        id: 3,
-        title: 'UI/UX Design',
-        description: 'User-centered interfaces that deliver seamless experiences.',
-        icon: '✨'
+        title: "Hospital Project",
+        category: "development",
+        year: "2025",
+        image: "img/project3.png",
+        description: "Revolutionary e-commerce platform with advanced filtering and personalization. Optimized for conversion and user retention.",
+        gallery: ["img/project3.png", "img/project4.png"],
+        role: "Development"
     },
     {
         id: 4,
-        title: 'Motion Design',
-        description: 'Engaging animations and interactions that bring life to your brand.',
-        icon: '🎬'
+        title: "Admin Page Project",
+        category: "Development",
+        year: "2025",
+        image: "img/project4.png",
+        description: "Complete rebranding for innovative health tech startup. Logo, guidelines, and digital presence redesign.",
+        gallery: ["img/project4.png", "img/project5.png"],
+        role: "Design"
     },
     {
         id: 5,
-        title: 'Branding',
-        description: 'Complete brand identity solutions that tell your story.',
-        icon: '🎯'
+        title: "Base Create Studio",
+        category: "design",
+        year: "2023",
+        image: "img/project5.jpg",
+        description: "Portfolio website for creative agency. Showcasing work with smooth interactions and stunning visuals.",
+        gallery: ["img/project5.jpg", "img/project6.jpg"],
+        role: "Design & Development"
     },
     {
         id: 6,
-        title: 'Responsive Design',
-        description: 'Perfect layouts across all devices and screen sizes.',
-        icon: '📱'
+        title: "AVVR Experience",
+        category: "development",
+        year: "2023",
+        image: "img/project6.jpg",
+        description: "Immersive VR experience platform with real-time interactions. Push boundaries of web-based VR technology.",
+        gallery: ["img/project6.jpg", "img/project1.jpg"],
+        role: "Development"
     }
+];
+
+// Services data
+const services = [
+    {
+        id: 1,
+        title: "UI/UX Design",
+        description: "Beautiful and functional interfaces that delight users and drive conversions.",
+        icon: "🎨"
+    },
+    {
+        id: 2,
+        title: "Web Development",
+        description: "Fast, responsive, and modern websites built with the latest technologies.",
+        icon: "💻"
+    },
+    {
+        id: 3,
+        title: "Branding",
+        description: "Complete brand identity solutions including logos, guidelines, and materials.",
+        icon: "✨"
+    },
+    {
+        id: 4,
+        title: "Motion Design",
+        description: "Eye-catching animations and motion graphics that bring stories to life.",
+        icon: "🎬"
+    },
+    {
+        id: 5,
+        title: "Strategy Consulting",
+        description: "Data-driven insights to help you reach your business goals and maximize growth.",
+        icon: "🎯"
+    },
+    {
+        id: 6,
+        title: "3D Visualization",
+        description: "Immersive 3D renderings and visualizations for products and spaces.",
+        icon: "🌐"
+    }
+];
+
+// Process steps
+const processSteps = [
+    { step: "01", title: "Research & Discovery", description: "Understanding your goals, audience, and market landscape." },
+    { step: "02", title: "Strategy & Planning", description: "Developing a comprehensive roadmap and strategic approach." },
+    { step: "03", title: "Design & Development", description: "Creating beautiful, functional solutions with cutting-edge technology." },
+    { step: "04", title: "Launch & Support", description: "Deploying your project and providing ongoing optimization support." }
+];
+
+// Pricing plans
+const pricingPlans = [
+    {
+        name: "Starter",
+        price: "$999",
+        description: "Perfect for small projects and startups",
+        featured: false,
+        features: ["5 pages", "Mobile responsive", "Basic SEO", "1 revision round"]
+    },
+    {
+        name: "Professional",
+        price: "$2,499",
+        description: "Ideal for growing businesses",
+        featured: true,
+        features: ["Up to 15 pages", "Full SEO optimization", "Animations & interactions", "3 revision rounds", "Analytics setup"]
+    },
+    {
+        name: "Enterprise",
+        price: "Custom",
+        description: "For complex, large-scale projects",
+        featured: false,
+        features: ["Unlimited pages", "Advanced integrations", "Custom solutions", "Dedicated support", "Post-launch optimization"]
+    }
+];
+
+// Gallery items
+const galleryItems = [
+    { id: 1, title: "Web Design", category: "design", icon: "🎨" },
+    { id: 2, title: "Branding", category: "design", icon: "✨" },
+    { id: 3, title: "Development", category: "development", icon: "💻" },
+    { id: 4, title: "Motion Design", category: "animation", icon: "🎬" },
+    { id: 5, title: "3D Art", category: "design", icon: "🌐" },
+    { id: 6, title: "UI Design", category: "design", icon: "🖌️" },
+    { id: 7, title: "Web App", category: "development", icon: "🚀" },
+    { id: 8, title: "Photography", category: "photography", icon: "📸" }
+];
+
+// Team members
+const teamMembers = [
+    {
+        name: "Clavin",
+        role: "Lead Designer",
+        bio: "Creative visionary with 5+ years of design experience.",
+        emoji: "👨‍💼",
+        socials: { instagram: "#", twitter: "#", linkedin: "#" }
+    },
+    {
+        name: "Luna",
+        role: "Developer",
+        bio: "Full-stack developer passionate about clean code.",
+        emoji: "👩‍💻",
+        socials: { instagram: "#", twitter: "#", linkedin: "#" }
+    },
+    {
+        name: "Alex",
+        role: "Strategy",
+        bio: "Business strategist focused on growth and innovation.",
+        emoji: "👨‍📊",
+        socials: { instagram: "#", twitter: "#", linkedin: "#" }
+    },
+    {
+        name: "Mia",
+        role: "Creative Director",
+        bio: "Art director with eye for compelling visuals.",
+        emoji: "👩‍🎨",
+        socials: { instagram: "#", twitter: "#", linkedin: "#" }
+    }
+];
+
+// Testimonials
+const testimonials = [
+    { text: "The team delivered beyond our expectations. Exceptional work!", author: "John Doe", role: "CEO, Tech Startup", stars: "⭐⭐⭐⭐⭐" },
+    { text: "Professional, creative, and deadline-oriented. Highly recommended!", author: "Jane Smith", role: "Founder, Design Studio", stars: "⭐⭐⭐⭐⭐" },
+    { text: "Amazing results and fantastic communication throughout.", author: "Mike Johnson", role: "Manager, Digital Agency", stars: "⭐⭐⭐⭐⭐" }
+];
+
+// Stats
+const stats = [
+    { number: "50+", label: "Projects", description: "Successfully completed projects" },
+    { number: "30+", label: "Clients", description: "Happy and satisfied clients" },
+    { number: "5+", label: "Years", description: "Years of industry experience" },
+    { number: "100%", label: "Satisfaction", description: "Client satisfaction rate" }
 ];
 
 // ===== RENDER FUNCTIONS =====
@@ -653,15 +900,25 @@ function renderFeaturedProjects() {
     const grid = document.getElementById('featuredGrid');
     if (!grid) return;
 
+    const featuredProjects = projects.slice(0, 3);
     grid.innerHTML = '';
-    projects.slice(0, 3).forEach((project) => {
+
+    featuredProjects.forEach((project) => {
         const card = document.createElement('a');
         card.href = '#';
         card.className = 'project-card';
+        card.onclick = (e) => {
+            e.preventDefault();
+            gsap.to(card, {
+                scale: 1.05,
+                duration: 0.2,
+                onComplete: () => navigateToProject(project.id)
+            });
+        };
+
         card.innerHTML = `
             <div class="project-image-wrapper">
-                <div class="light-layer"></div>
-                <img src="${project.image}" alt="${project.title}" class="project-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%231a1a1a%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2224%22 fill=%22%23666%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EImage%3C/text%3E%3C/svg%3E'">
+                <img src="${project.image}" alt="${project.title}" class="project-image" onerror="this.src='img/placeholder.svg'">
             </div>
             <div class="project-info">
                 <h3 class="project-title">${project.title}</h3>
@@ -671,36 +928,368 @@ function renderFeaturedProjects() {
                 </div>
             </div>
         `;
+
         grid.appendChild(card);
     });
+}
 
-    init3DTilt();
+function renderAllProjects(filterType = 'all') {
+    const list = document.getElementById('projectsList');
+    if (!list) return;
+
+    const filtered = filterType === 'all' 
+        ? projects 
+        : projects.filter(p => p.category.toLowerCase() === filterType.toLowerCase());
+
+    list.innerHTML = '';
+
+    filtered.forEach((project) => {
+        const card = document.createElement('a');
+        card.href = '#';
+        card.className = 'project-card';
+        card.onclick = (e) => {
+            e.preventDefault();
+            navigateToProject(project.id);
+        };
+
+        card.innerHTML = `
+            <div class="project-image-wrapper">
+                <img src="${project.image}" alt="${project.title}" class="project-image" onerror="this.src='img/placeholder.svg'">
+            </div>
+            <div class="project-info">
+                <h3 class="project-title">${project.title}</h3>
+                <div class="project-meta">
+                    <span class="project-year">${project.year}</span>
+                    <span class="project-category">${capitalizeText(project.category)}</span>
+                </div>
+            </div>
+        `;
+
+        list.appendChild(card);
+    });
+}
+
+function initWorkFilters() {
+    const filterButtons = document.querySelectorAll('.filter-tag');
+    if (filterButtons.length === 0) return;
+
+    filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.getAttribute('data-filter');
+            activeFilter = filter;
+            renderAllProjects(filter);
+        });
+    });
 }
 
 function renderServices() {
     const grid = document.getElementById('servicesGrid');
     if (!grid) return;
-
     grid.innerHTML = '';
-    services.forEach((service, index) => {
+    services.forEach((service) => {
         const card = document.createElement('div');
         card.className = 'service-card';
-        card.style.animation = `fadeInUp 0.8s ease-out ${index * 0.1}s forwards`;
-        card.style.opacity = '0';
         card.innerHTML = `
             <div class="service-icon">${service.icon}</div>
             <h3 class="service-title">${service.title}</h3>
             <p class="service-description">${service.description}</p>
-            <div class="service-hover-glow"></div>
         `;
         grid.appendChild(card);
     });
-
-    init3DTilt();
 }
 
-// Render on page load
-document.addEventListener('DOMContentLoaded', () => {
+function renderProcess() {
+    const timeline = document.getElementById('processTimeline');
+    if (!timeline) return;
+    timeline.innerHTML = '';
+    processSteps.forEach((step) => {
+        const stepEl = document.createElement('div');
+        stepEl.className = 'process-step';
+        stepEl.innerHTML = `
+            <div class="process-number">${step.step}</div>
+            <h3 class="process-title">${step.title}</h3>
+            <p class="process-description">${step.description}</p>
+        `;
+        timeline.appendChild(stepEl);
+    });
+}
+
+function renderPricing() {
+    const grid = document.getElementById('pricingGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    pricingPlans.forEach((plan) => {
+        const card = document.createElement('div');
+        card.className = plan.featured ? 'pricing-card featured' : 'pricing-card';
+        card.innerHTML = `
+            ${plan.featured ? '<div class="pricing-label">MOST POPULAR</div>' : ''}
+            <h3 class="pricing-name">${plan.name}</h3>
+            <div class="pricing-price">${plan.price}</div>
+            <p class="pricing-description">${plan.description}</p>
+            <ul class="pricing-features">
+                ${plan.features.map(feature => `<li>${feature}</li>`).join('')}
+            </ul>
+            <a href="contact.html" class="cta-button magnetic-btn" style="width: 100%; text-align: center;">Choose Plan →</a>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderGallery(filterType = 'all') {
+    const grid = document.getElementById('galleryGrid');
+    if (!grid) return;
+
+    const filtered = filterType === 'all' ? galleryItems : galleryItems.filter(item => item.category === filterType);
+    
+    grid.innerHTML = '';
+    filtered.forEach((item) => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        galleryItem.dataset.id = item.id;
+        galleryItem.innerHTML = `
+            <div style="font-size: 3rem;">${item.icon}</div>
+            <div class="gallery-overlay"></div>
+        `;
+        galleryItem.addEventListener('click', () => {
+            openLightbox(item);
+        });
+        grid.appendChild(galleryItem);
+    });
+}
+
+function openLightbox(item) {
+    const modal = document.getElementById('lightboxModal');
+    if (!modal) return;
+    
+    const img = document.getElementById('lightboxImage');
+    const title = document.getElementById('lightboxTitle');
+    const category = document.getElementById('lightboxCategory');
+
+    img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Crect fill='%231a1a1a' width='800' height='600'/%3E%3Ctext x='50%25' y='50%25' font-size='80' fill='%2300d9ff' text-anchor='middle' dominant-baseline='central'%3E${item.icon}%3C/text%3E%3C/svg%3E`;
+    title.textContent = item.title;
+    category.textContent = capitalizeText(item.category);
+    modal.classList.add('active');
+
+    gsap.from(modal, {
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.out'
+    });
+}
+
+function closeLightbox() {
+    const modal = document.getElementById('lightboxModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+function initGalleryPage() {
+    renderGallery('all');
+
+    const galleryTags = document.querySelectorAll('.gallery-tag');
+    galleryTags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            galleryTags.forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+            const filter = tag.dataset.filter;
+            renderGallery(filter);
+        });
+    });
+
+    const lightboxClose = document.getElementById('lightboxClose');
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+
+    const modal = document.getElementById('lightboxModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeLightbox();
+            }
+        });
+    }
+}
+
+function renderTeam() {
+    const grid = document.getElementById('teamGrid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    teamMembers.forEach((member) => {
+        const card = document.createElement('div');
+        card.className = 'team-member';
+        card.innerHTML = `
+            <div class="team-avatar">${member.emoji}</div>
+            <h3 class="team-name">${member.name}</h3>
+            <p class="team-role">${member.role}</p>
+            <p class="team-bio">${member.bio}</p>
+            <div class="team-socials">
+                <a href="${member.socials.instagram}" class="team-social-link" title="Instagram">f</a>
+                <a href="${member.socials.twitter}" class="team-social-link" title="Twitter">𝕏</a>
+                <a href="${member.socials.linkedin}" class="team-social-link" title="LinkedIn">in</a>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderTestimonials() {
+    const grid = document.getElementById('testimonialsGrid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    testimonials.forEach((testimonial) => {
+        const card = document.createElement('div');
+        card.className = 'testimonial';
+        card.innerHTML = `
+            <div class="testimonial-stars">${testimonial.stars}</div>
+            <div class="testimonial-quote">"</div>
+            <p class="testimonial-text">${testimonial.text}</p>
+            <p class="testimonial-author">${testimonial.author}</p>
+            <p class="testimonial-role">${testimonial.role}</p>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderStats() {
+    const grid = document.getElementById('statsGrid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    stats.forEach((stat) => {
+        const card = document.createElement('div');
+        card.className = 'stat';
+        card.innerHTML = `
+            <div class="stat-number">${stat.number}</div>
+            <h3 class="stat-label">${stat.label}</h3>
+            <p class="stat-description">${stat.description}</p>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function initContactForm() {
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+
+        if (!name || !email || !subject || !message) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        const formResponse = document.getElementById('formResponse');
+        
+        gsap.to(form, {
+            opacity: 0,
+            y: 20,
+            duration: 0.3,
+            onComplete: () => {
+                form.style.display = 'none';
+                formResponse.style.display = 'block';
+                
+                gsap.from(formResponse, {
+                    opacity: 0,
+                    scale: 0.9,
+                    duration: 0.5,
+                    ease: 'back.out'
+                });
+            }
+        });
+
+        setTimeout(() => {
+            form.reset();
+            gsap.to(form, {
+                opacity: 1,
+                y: 0,
+                duration: 0.3,
+                onStart: () => {
+                    form.style.display = 'flex';
+                    formResponse.style.display = 'none';
+                }
+            });
+        }, 5000);
+    });
+}
+
+function loadProjectDetail(projectId) {
+    const project = projects.find(p => p.id === projectId);
+    if (!project) {
+        window.location.href = 'work.html';
+        return;
+    }
+
+    const heroImage = document.getElementById('projectHeroImage');
+    if (heroImage) {
+        heroImage.style.backgroundImage = `url(${project.image})`;
+    }
+
+    const titleEl = document.getElementById('projectTitle');
+    if (titleEl) titleEl.textContent = project.title;
+    
+    const metaEl = document.getElementById('projectMeta');
+    if (metaEl) metaEl.textContent = `${project.year} • ${capitalizeText(project.category)}`;
+    
+    const descEl = document.getElementById('projectDescription');
+    if (descEl) descEl.textContent = project.description;
+    
+    const catEl = document.getElementById('projectCategory');
+    if (catEl) catEl.textContent = capitalizeText(project.category);
+    
+    const yearEl = document.getElementById('projectYear');
+    if (yearEl) yearEl.textContent = project.year;
+    
+    const roleEl = document.getElementById('projectRole');
+    if (roleEl) roleEl.textContent = project.role;
+
+    const gallery = document.getElementById('projectGallery');
+    if (gallery) {
+        gallery.innerHTML = project.gallery.map((img, i) => `
+            <div class="gallery-image" style="animation-delay: ${i * 0.1}s">
+                <img src="${img}" alt="Gallery ${i + 1}" onerror="this.src='img/placeholder.svg'">
+            </div>
+        `).join('');
+    }
+}
+
+function getProjectIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id') || sessionStorage.getItem('projectId');
+}
+
+// ===== PAGE LOAD =====
+window.addEventListener('load', () => {
     renderFeaturedProjects();
+    renderAllProjects();
     renderServices();
+    renderProcess();
+    renderPricing();
+    initGalleryPage();
+    renderTeam();
+    renderTestimonials();
+    renderStats();
+    initContactForm();
+    initWorkFilters();
+
+    // Load project detail if on project page
+    if (currentPage === 'project') {
+        const projectId = parseInt(getProjectIdFromUrl());
+        if (projectId) {
+            loadProjectDetail(projectId);
+        }
+    }
 });
+
+

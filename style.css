@@ -81,11 +81,11 @@ All pages use these CSS variables!
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     --glass-shadow-xl: 0 20px 50px 0 rgba(0, 0, 0, 0.5);
     
-    /* Neon Glows - Premium Multi-color */
-    --neon-glow-blue: 0 0 30px rgba(0, 217, 255, 0.4), inset 0 0 20px rgba(0, 217, 255, 0.1);
-    --neon-glow-purple: 0 0 30px rgba(187, 0, 255, 0.4), inset 0 0 20px rgba(187, 0, 255, 0.1);
-    --neon-glow-pink: 0 0 30px rgba(255, 0, 110, 0.4), inset 0 0 20px rgba(255, 0, 110, 0.1);
-    --neon-glow-multi: 0 0 30px rgba(0, 217, 255, 0.3), 0 0 20px rgba(187, 0, 255, 0.2), inset 0 0 30px rgba(0, 217, 255, 0.1);
+    /* Neon Glows - Premium Multi-color (Tone-Down for Better Balance) */
+    --neon-glow-blue: 0 0 30px rgba(0, 217, 255, 0.25), inset 0 0 20px rgba(0, 217, 255, 0.08);
+    --neon-glow-purple: 0 0 30px rgba(187, 0, 255, 0.25), inset 0 0 20px rgba(187, 0, 255, 0.08);
+    --neon-glow-pink: 0 0 30px rgba(255, 0, 110, 0.25), inset 0 0 20px rgba(255, 0, 110, 0.08);
+    --neon-glow-multi: 0 0 30px rgba(0, 217, 255, 0.2), 0 0 20px rgba(187, 0, 255, 0.15), inset 0 0 30px rgba(0, 217, 255, 0.08);
     
     /* Shadows - Premium Depth */
     --depth-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5), 0 18px 36px -18px rgba(0, 0, 0, 0.33);
@@ -274,7 +274,7 @@ button {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: logoFloat 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    text-shadow: 0 0 40px rgba(0, 217, 255, 0.3);
+    text-shadow: 0 0 40px rgba(0, 217, 255, 0.18);
 }
 
 @keyframes logoFloat {
@@ -428,7 +428,7 @@ button {
 .nav-link:hover {
     color: var(--neon-blue);
     transform: translateY(-3px);
-    text-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+    text-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
 }
 
 .nav-link:hover::before {
@@ -441,7 +441,7 @@ button {
 
 .nav-link.active {
     color: var(--neon-blue);
-    text-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+    text-shadow: 0 0 15px rgba(0, 217, 255, 0.25);
 }
 
 .nav-link.active::after {
@@ -590,7 +590,7 @@ button {
     }
     50% {
         filter: drop-shadow(0 0 25px rgba(0, 217, 255, 0.7)) drop-shadow(0 0 15px rgba(187, 0, 255, 0.5));
-        text-shadow: 0 0 50px rgba(0, 217, 255, 0.5);
+        text-shadow: 0 0 50px rgba(0, 217, 255, 0.25);
     }
 }
 

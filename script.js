@@ -1282,6 +1282,7 @@ window.addEventListener('load', () => {
     renderStats();
     initContactForm();
     initWorkFilters();
+    initTypingAnimation();
 
     // Load project detail if on project page
     if (currentPage === 'project') {
@@ -1291,5 +1292,48 @@ window.addEventListener('load', () => {
         }
     }
 });
+
+// ===== TYPING ANIMATION FOR ABOUT ME SECTION =====
+function initTypingAnimation() {
+    const typingElement = document.getElementById('typingText');
+    if (!typingElement) return;
+
+    const textToType = "Frontend Developer • UI Designer • Creative Editor";
+    let index = 0;
+    let isDeleting = false;
+    let speed = 80;
+    const pauseDuration = 2000;
+
+    function type() {
+        if (!isDeleting) {
+            // Typing forward
+            if (index < textToType.length) {
+                typingElement.textContent += textToType.charAt(index);
+                index++;
+                setTimeout(type, speed);
+            } else {
+                // Pause before deleting
+                setTimeout(() => {
+                    isDeleting = true;
+                    type();
+                }, pauseDuration);
+            }
+        } else {
+            // Deleting backward
+            if (index > 0) {
+                typingElement.textContent = textToType.substring(0, index - 1);
+                index--;
+                setTimeout(type, speed / 2);
+            } else {
+                // Pause before typing again
+                isDeleting = false;
+                setTimeout(type, pauseDuration);
+            }
+        }
+    }
+
+    // Start typing animation
+    type();
+}
 
 

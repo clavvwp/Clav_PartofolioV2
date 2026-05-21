@@ -219,7 +219,7 @@ class NavbarManager {
 // ===== 3D TILT EFFECT =====
 class TiltManager {
     constructor() {
-        this.cards = document.querySelectorAll('.project-card, .card, .team-card');
+        this.cards = document.querySelectorAll('.project-card, .card, .team-card, .card-3d');
         this.init();
     }
 
@@ -227,7 +227,12 @@ class TiltManager {
         this.cards.forEach(card => {
             card.addEventListener('mousemove', (e) => this.handleMouseMove(e, card));
             card.addEventListener('mouseleave', () => this.handleMouseLeave(card));
+            card.addEventListener('mouseenter', () => this.handleMouseEnter(card));
         });
+    }
+
+    handleMouseEnter(card) {
+        card.style.transition = 'none';
     }
 
     handleMouseMove(e, card) {
@@ -238,16 +243,22 @@ class TiltManager {
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
 
-        const rotateX = ((y - centerY) / centerY) * -15;
-        const rotateY = ((x - centerX) / centerX) * 15;
+        // Enhanced 3D calculations
+        const rotateX = ((y - centerY) / centerY) * -25;
+        const rotateY = ((x - centerX) / centerX) * 25;
+        const brightness = 1 + (Math.abs(rotateX) + Math.abs(rotateY)) / 100;
 
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03) translateZ(20px)`;
+        card.style.filter = `brightness(${brightness})`;
+        card.style.boxShadow = `0 20px 60px rgba(0, 255, 255, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.1)`;
         card.style.transition = 'none';
     }
 
     handleMouseLeave(card) {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-        card.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1) translateZ(0)';
+        card.style.filter = 'brightness(1)';
+        card.style.boxShadow = '';
+        card.style.transition = 'all 0.6s cubic-bezier(0.23, 1, 0.320, 1)';
     }
 }
 

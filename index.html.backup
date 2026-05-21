@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clav - Creative portofolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!--
+    ========================================
+    HOME PAGE - index.html (PREMIUM EDITION)
+    
+    🎯 QUICK SETUP:
+    1. Buka script.js → edit const projects array
+    2. Edit teks di bawah sesuai brand Anda
+    3. Ganti gambar di /img/
+    4. Edit warna di style.css → :root
+    
+    ========================================
+    -->
+
+    <!-- Loading Screen (Auto hide after 2s) -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <h1 class="loading-logo">CLAV</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p class="loading-text">Crafting excellence...</p>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-follower" id="cursorFollower"></div>
+
+    <!-- Smooth Scroll Container -->
+    <div id="smooth-scroll">
+        
+        <!-- Navbar -->
+        <nav class="navbar" id="navbar">
+            <div class="navbar-content">
+                <div class="navbar-logo">
+                    <a href="index.html">CLAV</a>
+                </div>
+                <ul class="navbar-menu" id="navbarMenu">
+                    <li><a href="index.html" class="nav-link active">Home</a></li>
+                    <li><a href="work.html" class="nav-link">Work</a></li>
+                    <li><a href="services.html" class="nav-link">Services</a></li>
+                    <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="team.html" class="nav-link">Team</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <!-- 3D Background Layers -->
+            <div class="hero-bg-layer parallax-layer" data-depth="0.1"></div>
+            <div class="hero-glow-orb parallax-layer" data-depth="0.3"></div>
+            <div class="hero-particles" id="particlesContainer"></div>
+            
+            <div class="hero-content hero-front-layer parallax-layer" data-depth="0.8">
+                <div class="hero-image-container parallax-layer" data-depth="1.2">
+                    <img src="img/profile.jpeg" alt="Clavin" class="hero-image" id="heroImage">
+                    <div class="hero-image-border"></div>
+                </div>
+                <h1 class="hero-title" id="heroTitle">
+                    <span class="text-reveal-word">Welcome</span>
+                    <span class="text-reveal-word">To</span>
+                    <span class="text-reveal-word">Clavin</span>
+                    <span class="text-reveal-word">Portofolio</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Crafted with precision. Designed for impact.
+                </p>
+                <div class="hero-cta">
+                    <a href="work.html" class="cta-button primary-btn glass-btn">Explore Work</a>
+                    <a href="contact.html" class="cta-button secondary-btn magnetic-btn">Get in Touch</a>
+                </div>
+            </div>
+            
+            <div class="scroll-indicator parallax-layer" data-depth="0.5">
+                <span>Scroll</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 2v10M8 12l-2-2M8 12l2-2" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Featured Work -->
+        <section class="featured-work">
+            <div class="section-container">
+                <div class="section-header">
+                    <h2 class="section-title">Featured Work</h2>
+                    <a href="work.html" class="view-all-link">View All →</a>
+                </div>
+                <div class="featured-grid" id="featuredGrid"></div>
+            </div>
+        </section>
+
+        <!-- About Preview -->
+        <section class="about-preview">
+            <div class="section-container">
+                <div class="about-preview-content">
+                    <h2 class="about-preview-title">Passionate about craft</h2>
+                    <p class="about-preview-text">
+                        We believe great design is the intersection of aesthetics and functionality. 
+                        Every pixel is intentional, every animation has purpose.
+                    </p>
+                    <a href="about.html" class="text-link">Learn more →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="section-container">
+                <h2 class="cta-title">Ready to create something amazing?</h2>
+                <a href="contact.html" class="cta-button magnetic-btn">Start Project →</a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="section-container">
+                <!-- About Section -->
+                <div class="footer-section">
+                    <h3>Clavin Studio</h3>
+                    <p>Crafting digital experiences with precision and innovation. Let's create something extraordinary together.</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <div class="footer-links">
+                        <a href="index.html">Home</a>
+                        <a href="work.html">Our Work</a>
+                        <a href="services.html">Services</a>
+                        <a href="about.html">About Me</a>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p style="margin-bottom: 0.5rem;"><strong>Email:</strong><br><a href="mailto:clavvwp@gmail.com" style="color: var(--neon-blue);">clavvwp@gmail.com</a></p>
+                    <p><strong>Available:</strong><br>Monday - Friday, 9:00 - 18:00</p>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 var(--spacing-lg);">
+                    <p>&copy; 2026 Clavin Creative. All rights reserved.</p>
+                    <div class="footer-social">
+                        <a href="#" target="_blank" title="Instagram">IN</a>
+                        <a href="#" target="_blank" title="Twitter">TW</a>
+                        <a href="#" target="_blank" title="LinkedIn">LI</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -35,11 +35,12 @@ VERSION: 5.0 - Elite Futuristic Edition
     --neon-pink: #ff006e;
     --neon-green: #00ff88;
     
-    /* Glows - Balanced & Premium */
-    --glow-cyan: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 40px rgba(0, 255, 255, 0.15);
-    --glow-blue: 0 0 20px rgba(0, 217, 255, 0.3), 0 0 40px rgba(0, 217, 255, 0.15);
-    --glow-purple: 0 0 20px rgba(187, 0, 255, 0.3), 0 0 40px rgba(187, 0, 255, 0.15);
-    --glow-multi: 0 0 20px rgba(0, 255, 255, 0.25), 0 0 30px rgba(187, 0, 255, 0.2);
+    /* Glows - Premium Neon Enhanced */
+    --glow-cyan: 0 0 20px rgba(0, 255, 255, 0.4), 0 0 40px rgba(0, 255, 255, 0.25), 0 0 60px rgba(0, 255, 255, 0.1);
+    --glow-blue: 0 0 20px rgba(0, 217, 255, 0.4), 0 0 40px rgba(0, 217, 255, 0.25), 0 0 60px rgba(0, 217, 255, 0.1);
+    --glow-purple: 0 0 20px rgba(187, 0, 255, 0.4), 0 0 40px rgba(187, 0, 255, 0.25), 0 0 60px rgba(187, 0, 255, 0.1);
+    --glow-pink: 0 0 20px rgba(255, 0, 110, 0.4), 0 0 40px rgba(255, 0, 110, 0.25), 0 0 60px rgba(255, 0, 110, 0.1);
+    --glow-multi: 0 0 20px rgba(0, 255, 255, 0.35), 0 0 30px rgba(187, 0, 255, 0.25), 0 0 50px rgba(255, 0, 110, 0.15);
     
     /* Borders */
     --border-primary: rgba(255, 255, 255, 0.1);
@@ -318,6 +319,140 @@ section {
 @keyframes glowPulse {
     0%, 100% { box-shadow: var(--glow-cyan), 0 0 60px rgba(0, 255, 255, 0.1); }
     50% { box-shadow: var(--glow-blue), 0 0 80px rgba(0, 217, 255, 0.15); }
+}
+
+/* ===== NEW: ENHANCED NEON GLOW ANIMATIONS ===== */
+@keyframes neonPulse {
+    0%, 100% { 
+        box-shadow: var(--glow-cyan), 0 0 40px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1);
+        filter: brightness(1);
+    }
+    50% { 
+        box-shadow: var(--glow-cyan), 0 0 60px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2);
+        filter: brightness(1.1);
+    }
+}
+
+@keyframes neonFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { 
+        box-shadow: var(--glow-cyan);
+        filter: brightness(1);
+    }
+    20%, 24%, 55% { 
+        box-shadow: var(--glow-cyan), 0 0 80px rgba(0, 255, 255, 0.6);
+        filter: brightness(1.2);
+    }
+}
+
+@keyframes neonBlur {
+    0%, 100% { 
+        box-shadow: var(--glow-cyan);
+        filter: blur(0px);
+    }
+    50% { 
+        box-shadow: var(--glow-cyan), 0 0 40px rgba(0, 255, 255, 0.4);
+        filter: blur(0.5px);
+    }
+}
+
+@keyframes multiNeonGlow {
+    0%, 100% { 
+        box-shadow: var(--glow-cyan), 0 0 50px rgba(0, 255, 255, 0.2);
+    }
+    25% { 
+        box-shadow: var(--glow-blue), 0 0 50px rgba(0, 217, 255, 0.2);
+    }
+    50% { 
+        box-shadow: var(--glow-purple), 0 0 50px rgba(187, 0, 255, 0.2);
+    }
+    75% { 
+        box-shadow: var(--glow-pink), 0 0 50px rgba(255, 0, 110, 0.2);
+    }
+}
+
+@keyframes enhanced3DTilt {
+    0% { transform: rotateX(0deg) rotateY(0deg) translateZ(0px); }
+    33% { transform: rotateX(5deg) rotateY(8deg) translateZ(20px); }
+    66% { transform: rotateX(-5deg) rotateY(-8deg) translateZ(20px); }
+    100% { transform: rotateX(0deg) rotateY(0deg) translateZ(0px); }
+}
+
+@keyframes float3D {
+    0%, 100% { transform: translateY(0px) translateZ(0px) rotateX(0deg); }
+    25% { transform: translateY(-20px) translateZ(15px) rotateX(5deg); }
+    50% { transform: translateY(0px) translateZ(25px) rotateX(0deg); }
+    75% { transform: translateY(-15px) translateZ(15px) rotateX(-5deg); }
+}
+
+@keyframes rotateGlowing {
+    0%, 100% { 
+        transform: rotateY(0deg) rotateZ(0deg);
+        box-shadow: var(--glow-cyan);
+    }
+    50% { 
+        transform: rotateY(180deg) rotateZ(15deg);
+        box-shadow: var(--glow-purple);
+    }
+}
+
+@keyframes infiniteGlow {
+    0% { 
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+    50% { 
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 50px rgba(0, 255, 255, 0.3);
+    }
+    100% { 
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
+    }
+}
+
+/* ===== ENHANCED NEON GLOW EFFECTS ===== */
+.neon-glow {
+    animation: neonPulse 3s ease-in-out infinite;
+}
+
+.neon-flicker {
+    animation: neonFlicker 0.15s infinite;
+}
+
+.neon-blur {
+    animation: neonBlur 2s ease-in-out infinite;
+}
+
+.multi-neon-glow {
+    animation: multiNeonGlow 4s ease-in-out infinite;
+}
+
+/* ===== ENHANCED 3D CARD EFFECTS ===== */
+.card-3d {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+}
+
+.card-3d:hover {
+    animation: enhanced3DTilt 0.5s ease-out forwards !important;
+}
+
+.enhanced-3d-float {
+    animation: float3D 4s ease-in-out infinite;
+}
+
+.rotating-glow {
+    animation: rotateGlowing 4s linear infinite;
+}
+
+/* ===== NEON BORDER EFFECTS ===== */
+.neon-border {
+    position: relative;
+    border: 2px solid transparent;
+    background: linear-gradient(var(--bg-tertiary), var(--bg-tertiary)) padding-box,
+                linear-gradient(135deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple)) border-box;
+    box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1), var(--glow-cyan);
+}
+
+.neon-border:hover {
+    box-shadow: inset 0 0 30px rgba(0, 255, 255, 0.2), var(--glow-cyan), 0 0 40px rgba(0, 255, 255, 0.3);
 }
 
 @keyframes revealer {
